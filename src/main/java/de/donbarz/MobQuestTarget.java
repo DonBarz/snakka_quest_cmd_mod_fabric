@@ -2,14 +2,15 @@ package de.donbarz;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.EntityType;
 
 public class MobQuestTarget extends QuestTarget{
     private final EntityType<?> target;
 
     public static final Codec<MobQuestTarget> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-            // Up to 16 fields can be declared here
-            EntityType.CODEC.fieldOf("target").forGetter(MobQuestTarget::get_target)
+            BuiltInRegistries.ENTITY_TYPE.byNameCodec().fieldOf("target").forGetter(MobQuestTarget::get_target)
     ).apply(instance, MobQuestTarget::new));
 
     public MobQuestTarget (EntityType<?> target) {
@@ -22,8 +23,8 @@ public class MobQuestTarget extends QuestTarget{
     }
 
     @Override
-    String name() {
-        return target.toShortString();
+    Component name() {
+        return Component.literal(target.toShortString());
     }
 
     public EntityType<?> get_target () {

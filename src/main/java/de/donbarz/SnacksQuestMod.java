@@ -27,7 +27,7 @@ public class SnacksQuestMod implements ModInitializer {
             Identifier.fromNamespaceAndPath(MOD_ID, "active_player_quests"),
             builder -> builder
                     .initializer(() -> new PlayerQuests(new ArrayList<>())) // The default value of the Attachment, if one has not been set.
-                    .persistent(PlayerQuests.CODEC) // Dictates how this Attachment's data should be saved and loaded.
+                    .persistent(PlayerQuests.CODEC.orElse(new PlayerQuests(new ArrayList<>()))) // Fall back to empty quests if old/corrupt attachment data fails to decode.
                     .copyOnDeath() // Dictates that this Attachment should persist even after the entity dies or converts.
     );
 

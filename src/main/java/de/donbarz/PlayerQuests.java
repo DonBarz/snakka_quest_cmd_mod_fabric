@@ -39,7 +39,7 @@ public class PlayerQuests {
             if (getPlayerStat(q.getTarget().statTarget(), player) >= q.getAmountGoal()) {
                 player.sendSystemMessage(Component.literal("Finished a quest: ")
                         .append(q.getQuestText())
-                        .append(String.valueOf(q.getAmountGoal() - q.getProgress()))
+                        .append(q.getAmountGoal() - q.getProgress() + " ")
                         .append(q.getTarget().name()));
                 finishedQuests.add(q);
             }
@@ -79,7 +79,7 @@ public class PlayerQuests {
 
         player.sendSystemMessage(Component.literal("New quest: ")
                 .append(newQuest.getQuestText())
-                .append(String.valueOf(newQuest.getAmountGoal() - newQuest.getProgress()))
+                .append(newQuest.getAmountGoal() - newQuest.getProgress() + " ")
                 .append(newQuest.getTarget().name()));
 
         curr.activeQuests.add(newQuest);
