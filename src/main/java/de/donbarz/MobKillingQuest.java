@@ -11,29 +11,29 @@ import static de.donbarz.PlayerQuests.getPlayerStat;
 
 public class MobKillingQuest extends Quest {
 
-    EntityType<?> questTarget;
+    MobQuestTarget questTarget;
     int amountGoal;
     int progress;
 
     public static final MapCodec<MobKillingQuest> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
-            EntityType.CODEC.fieldOf("quest_target").forGetter(MobKillingQuest::get_quest_target),
-            Codec.INT.fieldOf("progress").forGetter(MobKillingQuest::get_progress),
-            Codec.INT.fieldOf("amount_goal").forGetter(MobKillingQuest::get_amount_goal)
+            MobQuestTarget.CODEC.fieldOf("quest_target").forGetter(MobKillingQuest::get_quest_target),
+            Codec.INT.fieldOf("amount_goal").forGetter(MobKillingQuest::get_amount_goal),
+            Codec.INT.fieldOf("progress").forGetter(MobKillingQuest::get_progress)
     ).apply(instance, MobKillingQuest::new));
 
-    public MobKillingQuest(EntityType<?> target, int amount, int progress) {
+    public MobKillingQuest(MobQuestTarget target, int amount, int progress) {
         this.questTarget = target;
         this.amountGoal = amount;
         this.progress = progress;
     }
 
     public MobKillingQuest(EntityType<?> target, int amount, ServerPlayer player) {
-        this.questTarget = target;
+        this.questTarget = new MobQuestTarget(target);
         this.amountGoal = amount + getPlayerStat(target, player);
         this.progress = getPlayerStat(target, player);
     }
 
-    public EntityType<?> get_quest_target () {
+    public MobQuestTarget get_quest_target () {
         return questTarget;
     }
 

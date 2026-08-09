@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "id": "snacks_quest_mod",
+  "version": "${version}",
+  "name": "Snacks Quest Mod",
+  "description": "",
+  "authors": [],
+  "contact": {},
+  "license": "MIT",
+  "icon": "assets/snacks_quest_mod/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "client": [
+      "de.donbarz.client.SNacksQuestModClient"
+    ],
+    "main": [
+      "de.donbarz.SnacksQuestMod"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=${loader_version}",
+    "minecraft": "${minecraft_version}"
+  }
+}
