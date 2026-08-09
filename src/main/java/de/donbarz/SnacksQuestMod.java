@@ -18,34 +18,33 @@ public class SnacksQuestMod implements ModInitializer {
     final static String MOD_ID = "snacks_quest_mod";
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
-    static {
-        // Ensure dispatch registry entries exist before PlayerQuests codec is wired into attachments.
-        QuestTypes.bootstrap();
-    }
-
+    // quest data is attached to player and set to persist through player death and server restart
     public static final AttachmentType<PlayerQuests> PLAYER_QUEST_ATTACHMENT = AttachmentRegistry.create(
             Identifier.fromNamespaceAndPath(MOD_ID, "active_player_quests"),
             builder -> builder
-                    .initializer(() -> new PlayerQuests(new ArrayList<>())) // The default value of the Attachment, if one has not been set.
-                    .persistent(PlayerQuests.CODEC.orElse(new PlayerQuests(new ArrayList<>()))) // Fall back to empty quests if old/corrupt attachment data fails to decode.
-                    .copyOnDeath() // Dictates that this Attachment should persist even after the entity dies or converts.
+                    .initializer(() -> new PlayerQuests(new ArrayList<>()))
+                    .persistent(PlayerQuests.CODEC.orElse(new PlayerQuests(new ArrayList<>()))) // if the old data is corrupted
+                    .copyOnDeath()
     );
 
     @Override
     public void onInitialize() {
 
+        // registering the command
+        // has two subcommands: "add" for receiving a new random quest and "list" for listing current progress on all active quests
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
-            dispatcher.register(Commands.literal("quest").executes(context -> {
-                try {
-                    PlayerQuests.giveRandomQuest(context.getSource().getPlayerOrException());
-                } catch (Exception e) {
-                    LOGGER.error("Failed to execute /quest", e);
-                    throw e;
-                }
-                return 1;
-            }));
+            dispatcher.register(Commands.literal("quest")
+                    .then(Commands.literal("add").executes(context -> {
+                        PlayerQuests.giveRandomQuest(context.getSource().getPlayerOrException());
+                        return 1;
+            }))
+                    .then(Commands.literal("list").executes(context -> {
+                        PlayerQuests.viewQuestProgress(context.getSource().getPlayerOrException());
+                        return 1;
+                    })));
         });
 
+        // registering server ticks for updating/ checking quest progress
         ServerTickEvents.END_SERVER_TICK.register((world) -> {
             for (ServerPlayer p : world.getPlayerList().getPlayers()) {
                 PlayerQuests.update(p);

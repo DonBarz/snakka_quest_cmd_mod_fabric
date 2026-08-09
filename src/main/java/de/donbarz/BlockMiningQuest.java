@@ -10,10 +10,9 @@ import net.minecraft.world.level.block.Block;
 import static de.donbarz.PlayerQuests.getPlayerStat;
 
 public class BlockMiningQuest extends Quest {
-    private static final Component QUEST_TEXT = Component.literal("Mine ");
+    private static final Component QUEST_TEXT = Component.literal("Mine");
 
     public static final MapCodec<BlockMiningQuest> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
-            // Up to 16 fields can be declared here
             BlockQuestTarget.CODEC.fieldOf("quest_target").forGetter(BlockMiningQuest::get_quest_target),
             Codec.INT.fieldOf("amount_goal").forGetter(BlockMiningQuest::get_amount_goal),
             Codec.INT.fieldOf("progress").forGetter(BlockMiningQuest::get_progress)
@@ -24,6 +23,7 @@ public class BlockMiningQuest extends Quest {
     }
 
     public BlockMiningQuest(Block target, int amount, ServerPlayer player) {
+        // sets progress and amount goal for the player respecting the current values
         this(new BlockQuestTarget(target), amount + getPlayerStat(target, player), getPlayerStat(target, player));
     }
 

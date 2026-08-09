@@ -10,7 +10,7 @@ import net.minecraft.world.entity.EntityType;
 import static de.donbarz.PlayerQuests.getPlayerStat;
 
 public class MobKillingQuest extends Quest {
-    private static final Component QUEST_TEXT = Component.literal("Kill ");
+    private static final Component QUEST_TEXT = Component.literal("Kill");
 
     public static final MapCodec<MobKillingQuest> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
             MobQuestTarget.CODEC.fieldOf("quest_target").forGetter(MobKillingQuest::get_quest_target),
@@ -23,6 +23,7 @@ public class MobKillingQuest extends Quest {
     }
 
     public MobKillingQuest(EntityType<?> target, int amount, ServerPlayer player) {
+        // sets progress and amount goal for the player respecting the current values
         this(new MobQuestTarget(target), amount + getPlayerStat(target, player), getPlayerStat(target, player));
     }
 

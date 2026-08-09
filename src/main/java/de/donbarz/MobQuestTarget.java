@@ -24,7 +24,7 @@ public class MobQuestTarget extends QuestTarget{
 
     @Override
     Component name() {
-        return Component.literal(target.toShortString());
+        return Component.translatable(target.getDescriptionId());
     }
 
     public EntityType<?> get_target () {
