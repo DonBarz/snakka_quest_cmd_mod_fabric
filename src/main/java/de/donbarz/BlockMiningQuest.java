@@ -10,10 +10,7 @@ import net.minecraft.world.level.block.Block;
 import static de.donbarz.PlayerQuests.getPlayerStat;
 
 public class BlockMiningQuest extends Quest {
-
-    BlockQuestTarget questTarget;
-    int amountGoal;
-    int progress;
+    private static final Component QUEST_TEXT = Component.literal("Mine ");
 
     public static final MapCodec<BlockMiningQuest> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
             // Up to 16 fields can be declared here
@@ -23,35 +20,27 @@ public class BlockMiningQuest extends Quest {
     ).apply(instance, BlockMiningQuest::new));
 
     public BlockMiningQuest(BlockQuestTarget target, int amount, int progress) {
-        this.questTarget = target;
-        this.amountGoal = amount;
-        this.progress = progress;
+        super(target, amount, progress, QUEST_TEXT);
     }
 
     public BlockMiningQuest(Block target, int amount, ServerPlayer player) {
-        this.questTarget = new BlockQuestTarget(target);
-        this.amountGoal = amount + getPlayerStat(target, player);
-        this.progress = getPlayerStat(target, player);
+        this(new BlockQuestTarget(target), amount + getPlayerStat(target, player), getPlayerStat(target, player));
     }
 
     public BlockQuestTarget get_quest_target () {
-        return questTarget;
+        return (BlockQuestTarget) this.target;
     }
 
     public int get_progress () {
-        return progress;
+        return this.progress;
     }
 
     public int get_amount_goal () {
-        return amountGoal;
+        return this.amountGoal;
     }
-
-    private String blockMiningQuestString;
 
     @Override
     public QuestType<?> getType() {
         return QuestTypes.BLOCK_MINING_QUEST;
     }
-
-    public Component questText = Component.literal("Mine");
 }

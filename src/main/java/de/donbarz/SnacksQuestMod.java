@@ -1,6 +1,5 @@
 package de.donbarz;
 
-import com.mojang.serialization.Codec;
 import net.fabricmc.api.ModInitializer;
 
 import net.fabricmc.fabric.api.attachment.v1.AttachmentRegistry;
@@ -8,7 +7,6 @@ import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.minecraft.commands.Commands;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import org.slf4j.Logger;
@@ -19,6 +17,11 @@ import java.util.ArrayList;
 public class SnacksQuestMod implements ModInitializer {
     final static String MOD_ID = "snacks_quest_mod";
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
+
+    static {
+        // Ensure dispatch registry entries exist before PlayerQuests codec is wired into attachments.
+        QuestTypes.bootstrap();
+    }
 
     public static final AttachmentType<PlayerQuests> PLAYER_QUEST_ATTACHMENT = AttachmentRegistry.create(
             Identifier.fromNamespaceAndPath(MOD_ID, "active_player_quests"),
@@ -33,7 +36,12 @@ public class SnacksQuestMod implements ModInitializer {
 
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
             dispatcher.register(Commands.literal("quest").executes(context -> {
-                PlayerQuests.giveRandomQuest(context.getSource().getPlayerOrException());
+                try {
+                    PlayerQuests.giveRandomQuest(context.getSource().getPlayerOrException());
+                } catch (Exception e) {
+                    LOGGER.error("Failed to execute /quest", e);
+                    throw e;
+                }
                 return 1;
             }));
         });

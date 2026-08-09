@@ -10,8 +10,6 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import org.jspecify.annotations.NonNull;
-import org.jspecify.annotations.Nullable;
 
 import java.util.*;
 
@@ -38,8 +36,11 @@ public class PlayerQuests {
         List<Quest> finishedQuests = new ArrayList<>();
 
         for (Quest q : curr.activeQuests) {
-            if (getPlayerStat(q.target, player) >= q.amountGoal) {
-                player.sendSystemMessage(Component.literal("Finished a quest: ").append(q.questText).append(String.valueOf(q.amountGoal-q.progress)).append(q.target.name()));
+            if (getPlayerStat(q.getTarget().statTarget(), player) >= q.getAmountGoal()) {
+                player.sendSystemMessage(Component.literal("Finished a quest: ")
+                        .append(q.getQuestText())
+                        .append(String.valueOf(q.getAmountGoal() - q.getProgress()))
+                        .append(q.getTarget().name()));
                 finishedQuests.add(q);
             }
         }
@@ -62,7 +63,9 @@ public class PlayerQuests {
     }
 
     public static void giveRandomQuest (ServerPlayer player) {
-        //if (!player.hasAttached(PLAYER_QUEST_ATTACHMENT)) {player.setAttached(PLAYER_QUEST_ATTACHMENT, new PlayerQuests(new ArrayList<>()));}
+        if (!player.hasAttached(PLAYER_QUEST_ATTACHMENT)) {
+            player.setAttached(PLAYER_QUEST_ATTACHMENT, new PlayerQuests(new ArrayList<>()));
+        }
 
         final Quest[] possibleQuests = new Quest[]{
                 new BlockMiningQuest(Blocks.STONE, 16, player),
@@ -74,7 +77,10 @@ public class PlayerQuests {
 
         Quest newQuest = possibleQuests[(int) (Math.random() * possibleQuests.length)];
 
-        player.sendSystemMessage(Component.literal("New quest: ").append(newQuest.questText).append(String.valueOf(newQuest.amountGoal- newQuest.progress)).append(newQuest.target.name()));
+        player.sendSystemMessage(Component.literal("New quest: ")
+                .append(newQuest.getQuestText())
+                .append(String.valueOf(newQuest.getAmountGoal() - newQuest.getProgress()))
+                .append(newQuest.getTarget().name()));
 
         curr.activeQuests.add(newQuest);
 

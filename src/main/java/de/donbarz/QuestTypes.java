@@ -10,4 +10,8 @@ public class QuestTypes {
     public static <T extends Quest> QuestType<T> register(String id, QuestType<T> questType) {
         return Registry.register(QuestType.REGISTRY, Identifier.fromNamespaceAndPath(SnacksQuestMod.MOD_ID, id), questType);
     }
+
+    public static void bootstrap() {
+        // No-op: calling this method forces class initialization and static registrations above.
+    }
 }

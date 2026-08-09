@@ -3,10 +3,9 @@ package de.donbarz;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.level.block.Block;
 
 public class MobQuestTarget extends QuestTarget{
-    EntityType<?> target;
+    private final EntityType<?> target;
 
     public static final Codec<MobQuestTarget> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             // Up to 16 fields can be declared here
@@ -18,11 +17,16 @@ public class MobQuestTarget extends QuestTarget{
     }
 
     @Override
+    Object statTarget() {
+        return target;
+    }
+
+    @Override
     String name() {
         return target.toShortString();
     }
 
-    EntityType<?> get_target () {
+    public EntityType<?> get_target () {
         return target;
     }
 }

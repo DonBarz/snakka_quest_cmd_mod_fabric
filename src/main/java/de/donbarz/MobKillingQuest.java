@@ -10,10 +10,7 @@ import net.minecraft.world.entity.EntityType;
 import static de.donbarz.PlayerQuests.getPlayerStat;
 
 public class MobKillingQuest extends Quest {
-
-    MobQuestTarget questTarget;
-    int amountGoal;
-    int progress;
+    private static final Component QUEST_TEXT = Component.literal("Kill ");
 
     public static final MapCodec<MobKillingQuest> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
             MobQuestTarget.CODEC.fieldOf("quest_target").forGetter(MobKillingQuest::get_quest_target),
@@ -22,27 +19,23 @@ public class MobKillingQuest extends Quest {
     ).apply(instance, MobKillingQuest::new));
 
     public MobKillingQuest(MobQuestTarget target, int amount, int progress) {
-        this.questTarget = target;
-        this.amountGoal = amount;
-        this.progress = progress;
+        super(target, amount, progress, QUEST_TEXT);
     }
 
     public MobKillingQuest(EntityType<?> target, int amount, ServerPlayer player) {
-        this.questTarget = new MobQuestTarget(target);
-        this.amountGoal = amount + getPlayerStat(target, player);
-        this.progress = getPlayerStat(target, player);
+        this(new MobQuestTarget(target), amount + getPlayerStat(target, player), getPlayerStat(target, player));
     }
 
     public MobQuestTarget get_quest_target () {
-        return questTarget;
+        return (MobQuestTarget) this.target;
     }
 
     public int get_progress () {
-        return progress;
+        return this.progress;
     }
 
     public int get_amount_goal () {
-        return amountGoal;
+        return this.amountGoal;
     }
 
     @Override
@@ -50,6 +43,5 @@ public class MobKillingQuest extends Quest {
         return QuestTypes.MOB_KILLING_QUEST;
     }
 
-    public Component questText = Component.literal("Kill");
 
 }
