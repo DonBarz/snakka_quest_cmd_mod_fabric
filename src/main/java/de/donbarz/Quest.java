@@ -3,7 +3,7 @@ package de.donbarz;
 import com.mojang.serialization.Codec;
 import net.minecraft.network.chat.Component;
 
-abstract class Quest {
+public class Quest {
 
     QuestTarget target;
     int progress;
@@ -13,5 +13,5 @@ abstract class Quest {
     static Codec<Quest> CODEC = QuestType.REGISTRY.byNameCodec()
             .dispatch("type", Quest::getType, QuestType::codec);
 
-    abstract QuestType<?> getType();
+    QuestType<?> getType() {return null;}
 }
